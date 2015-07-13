@@ -1,0 +1,13 @@
+﻿<Window x:Class="ININ.Alliances.RecursiveLabsAddin.view.RecursiveLabsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:view="clr-namespace:ININ.Alliances.RecursiveLabsAddin.view"
+        Title="Recursive Labs" Height="400" Width="460"
+        ResizeMode="NoResize" WindowStyle="ToolWindow"
+        Icon="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/icon.ico">
+    <Grid>
+        <view:RecursiveLabsHostOrGuest x:Name="HostOrGuestPanel" SessionTypeSelected="OnSessionTypeSelected" />
+        <view:CreateSessionView x:Name="SessionViewPanel" Visibility="Collapsed" 
+                                HorizontalAlignment="Stretch" VerticalAlignment="Stretch"  />
+    </Grid>
+</Window>

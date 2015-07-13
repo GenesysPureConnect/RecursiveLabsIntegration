@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script type="text/javascript" src="scripts/jquery-2.1.1.min.js"></script>
+	<script type="text/javascript" src="scripts/config.js"></script>
+    <script type="text/javascript">
+        function Setup() {
+            // start chat
+            document.getElementById('chatiframe').src = 'chat/BypassLoginForm/chatOrCallback.html?chatUsername='+getParameterByName('chatUsername');
+        }
+
+		function sendToChat(message) {
+			$('#chatiframe').contents().find('#inputPanel').val(message);
+            setTimeout(function() { $('#chatiframe').contents().find('#sendButton').click(); }, 500);
+		}
+
+		function getParameterByName(name) {
+            name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+            var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+                results = regex.exec(location.search);
+            return results == null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+        }
+
+		$(document).ready(function(){
+			populateMenuOptions($('#HostOptionList'), hostOptions, 'getHostLink');
+			populateMenuOptions($('#GuestOptionList'), guestOptions, 'getGuestLink');
+		});
+
+		var globalListIndex = 0;
+		function populateMenuOptions(listElement, options, invocationFunctionName) {
+			$.each(options, function (index, value){
+				// Generate element ID
+				globalListIndex++;
+				var elementId = 'hoverListItem' + globalListIndex;
+
+				// Add item to list
+				listElement.append('<li id="' + elementId + '"><a href="#" alt="' + value.description + '" onclick="' + invocationFunctionName + '(\'' + value.url + '\')">' + value.text + '<span class="linkHoverText">Click to launch</span></a><div class="linkDescription">' + value.description + '</div></li>');
+					console.debug($('#hostLink' + index));
+
+				// Hover in/out
+				$('#' + elementId).hover(function(){
+					// Mouse in
+					$(this).find('.linkHoverText').css('display','inline');
+					$(this).find('.linkDescription').slideDown({
+						duration: 70,
+						queue: false
+					});
+				},function(){
+					// Mouse out
+					$(this).find('.linkHoverText').css('display','none');
+					$(this).find('.linkDescription').slideUp();
+				});
+			});
+		}
+
+		function getHostLink(url){
+			console.debug('Host link: ' + url);
+			console.debug(apiUrl);
+			$.ajax({
+				crossDomain: true,
+				data: {
+					hostName: getParameterByName('chatUsername'),
+					hostEmail: 'fakehost@aiuvhniaunakjsfhajkdfsh.com',
+					guestName: 'Guest Agent',
+					guestEmail: 'fakeguest@aiuvhniaunakjsfhajkdfsh.com',
+					url: url,
+					screenDomain: screenDomain
+				},
+				error: getHostLinkError,
+				headers: {
+					Authorization: authorizationHeader
+				},
+				method: 'GET',
+				success: getHostLinkSuccess,
+				url: apiUrl
+			});
+		}
+		function getHostLinkSuccess(data, textStatus, jqXHR) {
+			console.group('getHostLinkSuccess');
+			console.debug(data);
+			console.debug(textStatus);
+			console.debug(jqXHR);
+			console.groupEnd();
+
+			sendToChat('Heres the guest link for you to join me: ' + data.guestLink);
+
+			setTimeout(function() { window.open(data.hostLink); }, 1000);
+		}
+
+		function getHostLinkError(jqXHR, textStatus, errorThrown) {
+			console.group('getHostLinkError');
+			console.debug(jqXHR);
+			console.debug(textStatus);
+			console.error(errorThrown);
+			console.groupEnd();
+		}
+
+		function getGuestLink(url){
+			console.debug('Guest link: ' + url);
+			console.debug(apiUrl);
+			$.ajax({
+				crossDomain: true,
+				data: {
+					hostName: 'Host Agent',
+					hostEmail: 'fakehost@aiuvhniaunakjsfhajkdfsh.com',
+					guestName: getParameterByName('chatUsername'),
+					guestEmail: 'fakeguest@aiuvhniaunakjsfhajkdfsh.com',
+					url: url,
+					screenDomain: screenDomain
+				},
+				error: getGuestLinkError,
+				headers: {
+					Authorization: authorizationHeader
+				},
+				method: 'GET',
+				success: getGuestLinkSuccess,
+				url: apiUrl
+			});
+		}
+		function getGuestLinkSuccess(data, textStatus, jqXHR) {
+			console.group('getGuestLinkSuccess');
+			console.debug(data);
+			console.debug(textStatus);
+			console.debug(jqXHR);
+			console.groupEnd();
+
+			sendToChat('Heres the host link for you to show me: ' + data.hostLink);
+
+			setTimeout(function() { window.open(data.guestLink); }, 1000);
+		}
+
+		function getGuestLinkError(jqXHR, textStatus, errorThrown) {
+			console.group('getGuestLinkError');
+			console.debug(jqXHR);
+			console.debug(textStatus);
+			console.error(errorThrown);
+			console.groupEnd();
+		}
+	</script>
+	<title>Web Chat</title>
+	<style type="text/css">
+		body {
+			margin: 0px;
+			padding: 0px;
+			height: 100vh;
+			background-color: #FBCA48;
+            font-family: "Arial","Helvetica", sans-serif;
+            font-size: 10pt;
+		}
+
+		iframe {
+			margin: 0px;
+			padding: 0px;
+			border-width: 0px;
+			border-collapse: collapse;
+			width: 99%;
+			height: 99%;
+		}
+
+		#logobox {
+			height: 39px;
+			background-color: #0E1C2C;
+			width: 100%;
+			border-width: 0 0 1px 0;
+			border-color: #DDEDFF;
+			border-style: solid;
+		}
+
+		#logobox2 {
+			height: 32px;
+			background-color: #CCDAEA;
+			width: 100%;
+			border-width: 0 0 4px 0;
+			border-color: #468BDB;
+			border-style: solid;
+		}
+
+		#logobox2 > div {
+			font-size: 14pt;
+			padding: 6px 0 0 6px;
+		}
+
+		#ButtonContainer {
+			position: fixed;
+			top: 0;
+			right: 0;
+			z-index: 100;
+			width: 260px;
+			margin: 0px;
+			background-color: #DDEDFF;
+			height: 100%;
+		}
+
+		#ButtonContainerContents {
+			margin: 12px;
+		}
+
+		button, input {
+			width: 100%;
+		}
+
+		ul {
+		    list-style-type: none;
+		    padding: 0px;
+		    margin: 0px;
+		}
+
+		li > a {
+			background-color: #0E1C2C;
+			color: #FFFFFF;
+			display: block;
+			padding: 3px;
+			margin: 3px 1px 0 1px;
+			border: 1px solid #468BDB;
+			text-decoration: none;
+			font-weight: bold;
+		}
+
+		li > a:visited {
+			color: #FFFFFF;
+		}
+
+		li > a:hover {
+			color: #BED62F;
+		}
+
+		li > div {
+			background-color: #CCDAEA;
+			border-width: 0 1px 1px 1px;
+			border-style: solid;
+			border-color: #468BDB;
+			padding: 3px;
+			margin: 0 1px 1px 1px;
+		}
+
+		a, a:visited {
+			color: #6B0014;
+		}
+
+		a:hover {
+			color: #007EA2;
+		}
+
+		.linkDescription {
+			display:none;
+		}
+
+		.linkHoverText {
+			float: right;
+			display:none;
+			color: #BED62F;
+		}
+	</style>
+</head>
+<body onload="Setup()">
+	<iframe id="chatiframe"></iframe>
+	<div id="ButtonContainer">
+		<div id="logobox">
+			<img src="img/cwmn logo.png" />
+		</div>
+		<div id="logobox2">
+			<div>Screenshare with an agent</div>
+		</div>
+		<div id="ButtonContainerContents">
+			<img src="img/cwmn show agent.png" /><br />
+			<ul id="HostOptionList"></ul>
+			<br />
+			<br />
+			<img src="img/cwmn guided tour.png" /><br />
+			<ul id="GuestOptionList"></ul>
+		</div>
+	</div>
+</body>
+</html>

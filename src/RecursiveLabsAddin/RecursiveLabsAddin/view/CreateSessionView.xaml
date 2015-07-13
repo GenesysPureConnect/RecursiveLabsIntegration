@@ -1,0 +1,272 @@
+﻿<UserControl x:Class="ININ.Alliances.RecursiveLabsAddin.view.CreateSessionView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:viewmodel="clr-namespace:ININ.Alliances.RecursiveLabsAddin.viewmodel"
+             xmlns:view="clr-namespace:ININ.Alliances.RecursiveLabsAddin.view"
+             mc:Ignorable="d" UseLayoutRounding="True"
+             d:DesignHeight="400" d:DesignWidth="500" d:DataContext="{d:DesignInstance viewmodel:RecursiveLabsSessionViewModel}">
+    <UserControl.Resources>
+        <Style x:Key="NoChromeButton" TargetType="{x:Type Button}">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="1"/>
+            <Setter Property="Foreground" Value="{DynamicResource {x:Static SystemColors.ControlTextBrushKey}}"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="3,0" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type Button}">
+                        <Grid x:Name="Chrome" Background="{TemplateBinding Background}" SnapsToDevicePixels="true">
+                            <ContentPresenter 
+                                HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" 
+                                Margin="{TemplateBinding Padding}" 
+                                RecognizesAccessKey="True" 
+                                SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" 
+                                VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsEnabled" Value="false">
+                                <Setter Property="Foreground" Value="#ADADAD"/>
+                                <Setter Property="Opacity" TargetName="Chrome" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="UrlButtonStyle" BasedOn="{StaticResource NoChromeButton}" TargetType="Button">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="ToolTip" Value="Open Link" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/earth.png" TileMode="None" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+        <Style x:Key="CopyButtonStyle" BasedOn="{StaticResource NoChromeButton}" TargetType="Button">
+            <Setter Property="Width" Value="16" />
+            <Setter Property="Height" Value="16" />
+            <Setter Property="ToolTip" Value="Copy Link" />
+            <Setter Property="Background">
+                <Setter.Value>
+                    <ImageBrush ImageSource="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/documents.png" TileMode="None" Stretch="UniformToFill" AlignmentX="Center" AlignmentY="Center" />
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </UserControl.Resources>
+    
+    <ScrollViewer HorizontalScrollBarVisibility="Disabled" VerticalScrollBarVisibility="Auto" Margin="0">
+        <DockPanel>
+            <Grid DockPanel.Dock="Top" Background="#0E1C2C" Margin="0,0,0,2">
+                <Image Source="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/RL_Logo_white.png" 
+                       Width="255" Height="33" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="10" />
+            </Grid>
+
+            <DockPanel LastChildFill="False" Margin="3">
+                <!-- Session Type -->
+                <DockPanel Dock="Top" LastChildFill="False">
+                    <DockPanel.Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DockPanel.Style>
+                    <Label DockPanel.Dock="Left" FontWeight="Bold">Session Type</Label>
+                    <view:BooleanToggle Value="{Binding Path=SimpleSessionType, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                    DockPanel.Dock="Right" Width="90"
+                                    VerticalAlignment="Center" HorizontalAlignment="Right"
+                                    TrueText="Host" TrueTextColor="#00395A" TrueColor="#B0C72F" 
+                                    FalseText="View" FalseTextColor="#B0C72F" FalseColor="#00395A" />
+                </DockPanel>
+
+                <!-- URLs -->
+                <DockPanel Dock="Top">
+                    <DockPanel.Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DockPanel.Style>
+                    <Label DockPanel.Dock="Top" HorizontalAlignment="Left" FontWeight="Bold">Select a page:</Label>
+                    <DockPanel Margin="6,0,0,0">
+                        <DockPanel DockPanel.Dock="Bottom" HorizontalAlignment="Stretch">
+                            <Label DockPanel.Dock="Left" FontWeight="Bold">URL:</Label>
+                            <TextBlock Text="{Binding Path=SelectedUrl.Url}" TextWrapping="NoWrap" 
+                                   TextTrimming="CharacterEllipsis" VerticalAlignment="Center" />
+                        </DockPanel>
+                        <ListBox Name="UrlBox" Height="130" 
+                                 ItemsSource="{Binding Path=Urls}" 
+                                 SelectedItem="{Binding Path=SelectedUrl}"
+                                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                            <ListBox.ItemContainerStyle>
+                                <Style TargetType="ListBoxItem">
+                                    <Setter Property="IsSelected" Value="{Binding Path=IsSelected, Mode=TwoWay}"/>
+                                </Style>
+                            </ListBox.ItemContainerStyle>
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Path=DisplayText}" HorizontalAlignment="Stretch" TextWrapping="Wrap" 
+                                           Margin="2">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Path=IsSelected}" Value="true">
+                                                        <Setter Property="FontWeight" Value="Bold" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </DockPanel>
+                </DockPanel>
+
+                <!-- Host URL -->
+                <DockPanel Dock="Top" Margin="0,4">
+                    <DockPanel.Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DockPanel.Style>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Label FontWeight="Bold">Host Link</Label>
+                        <Button Style="{StaticResource CopyButtonStyle}" Click="CopyHostLink_OnClick" />
+                        <Button Style="{StaticResource UrlButtonStyle}" Click="OpenHostLink_OnClick" />
+                    </StackPanel>
+                    <TextBox Background="Transparent"
+                             VerticalAlignment="Center"
+                             BorderThickness="0"
+                             Text="{Binding Path=HostLink}"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             Margin="5,0,0,0" />
+                </DockPanel>
+
+                <!-- Guest URL -->
+                <DockPanel Dock="Top" Margin="0,4">
+                    <DockPanel.Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DockPanel.Style>
+                    <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
+                        <Label FontWeight="Bold">Guest Link</Label>
+                        <Button Style="{StaticResource CopyButtonStyle}" Click="CopyGuestLink_OnClick" />
+                        <Button Style="{StaticResource UrlButtonStyle}" Click="OpenGuestLink_OnClick" />
+                    </StackPanel>
+                    <TextBox Background="Transparent"
+                             VerticalAlignment="Center"
+                             BorderThickness="0"
+                             Text="{Binding Path=GuestLink}"
+                             IsReadOnly="True"
+                             TextWrapping="Wrap"
+                             Margin="5,0,0,0" />
+                </DockPanel>
+
+                <!-- Buttons -->
+                <Grid Margin="0" DockPanel.Dock="Bottom">
+                    <Grid.Style>
+                        <Style TargetType="Grid">
+                            <Setter Property="Visibility" Value="Visible" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Collapsed" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Grid.Style>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition />
+                        <ColumnDefinition />
+                    </Grid.ColumnDefinitions>
+
+                    <Button Grid.Column="0" Margin="4" Click="StartSession_OnClick" IsEnabled="{Binding Path=HasSelectedUrl}">
+                        <StackPanel Orientation="Horizontal" Margin="4">
+                            <Image Width="32" Height="32" VerticalAlignment="Center">
+                                <Image.Style>
+                                    <Style TargetType="Image">
+                                        <Setter Property="Source" Value="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/view_32.png" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=SimpleSessionType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                <Setter Property="Source" Value="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/host_32.png" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Image.Style>
+                            </Image>
+                            <Label VerticalAlignment="Center" FontSize="16">
+                                <Label.Style>
+                                    <Style TargetType="Label">
+                                        <Setter Property="Content" Value="Start Viewing" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding Path=SimpleSessionType, Mode=OneWay, UpdateSourceTrigger=PropertyChanged}" Value="True">
+                                                <Setter Property="Content" Value="Start Hosting" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Label.Style>
+                            </Label>
+                        </StackPanel>
+                    </Button>
+
+                    <Button Grid.Column="1" Margin="4" Click="Cancel_OnClick">
+                        <StackPanel Orientation="Horizontal" Margin="4">
+                            <Image Width="32" Height="32" VerticalAlignment="Center"
+                               Source="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/delete.png"/>
+                            <Label VerticalAlignment="Center" FontSize="16">Cancel</Label>
+                        </StackPanel>
+                    </Button>
+                </Grid>
+
+                <!-- Final button -->
+                <DockPanel Dock="Bottom" Margin="0,4">
+                    <DockPanel.Style>
+                        <Style TargetType="DockPanel">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding Path=HasSession}" Value="true">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </DockPanel.Style>
+
+                    <Button Margin="4" Click="Cancel_OnClick">
+                        <StackPanel Orientation="Horizontal" Margin="4">
+                            <Image Width="32" Height="32" VerticalAlignment="Center"
+                               Source="pack://application:,,,/ININ.Alliances.RecursiveLabsAddin;component/Resources/delete.png"/>
+                            <Label VerticalAlignment="Center" FontSize="16">Close</Label>
+                        </StackPanel>
+                    </Button>
+                </DockPanel>
+            </DockPanel>
+        </DockPanel>
+    </ScrollViewer>
+</UserControl>
