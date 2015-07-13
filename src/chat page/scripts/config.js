@@ -1,29 +1,29 @@
 // Define the link options here
 var hostOptions = [
 		{
-			"text": "Page 1",
-			"description": "A page description",
-			"url": "https://yoursite.com"
+			"text": "Recursive Labs",
+			"description": "One-click, no-download disruptive sharing for everyone!",
+			"url": "http://recursivelabs.io"
 		},
 		{
-			"text": "Page 2",
-			"description": "A description for another page",
-			"url": "https://yoursite.com/another/page.html"
+			"text": "Landing Page",
+			"description": "The landing page for testing",
+			"url": "https://tim-cic4su5.dev2000.com/cwmn2/landing.html"
 		}
 	];
 var guestOptions = [
 		{
-			"text": "Page 1",
-			"description": "A page description",
-			"url": "https://yoursite.com"
+			"text": "Recursive Labs",
+			"description": "One-click, no-download disruptive sharing for everyone!",
+			"url": "http://recursivelabs.io"
 		},
 		{
-			"text": "Page 2",
-			"description": "A description for another page",
-			"url": "https://yoursite.com/another/page.html"
+			"text": "Landing Page",
+			"description": "The landing page for testing",
+			"url": "https://tim-cic4su5.dev2000.com/cwmn2/landing.html"
 		}
 	];
 
-var screenDomain = 'yourdomain.com';
-var authorizationHeader = 'auth header goes here';
+var screenDomain = 'yoursite.com';
+var authorizationHeader = 'your auth key';
 var apiUrl = 'http://m.clickwith.me/session/inviteToHost';
